@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -68,6 +67,17 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
 }
 
+model TransactionLog {
+  id          String   @id @default(uuid())
+  entity      String
+  entityId    String
+  action      String
+  userId     String?
+  before     Json?
+  after      Json?
+  createdAt   DateTime @default(now())
+}
+ 
 enum Role {
   ADMIN
   VOLUNTEER
