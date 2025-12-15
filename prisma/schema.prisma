@@ -68,6 +68,17 @@ model Notification {
   user User @relation(fields: [userId], references: [id])
 }
 
+model TransactionLog {
+  id          String   @id @default(uuid())
+  entity      String
+  entityId    String
+  action      String
+  userId     String?
+  before     Json?
+  after      Json?
+  createdAt   DateTime @default(now())
+}
+ 
 enum Role {
   ADMIN
   VOLUNTEER
