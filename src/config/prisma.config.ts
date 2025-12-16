@@ -4,7 +4,11 @@ import pg from "pg";
 import logger from "./logger.config";
 
 const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
+  host: process.env.DB_HOST || "localhost",
+  port: parseInt(process.env.DB_PORT || "5432"),
+  database: process.env.DB_NAME || "dcci",
+  user: process.env.DB_USER || "postgres",
+  password: String(process.env.DB_PASSWORD || "rizqbaik2008"),
 });
 
 export const prisma = new PrismaClient({
