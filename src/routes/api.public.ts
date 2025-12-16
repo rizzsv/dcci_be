@@ -1,19 +1,8 @@
 import { Router } from 'express';
+import { ReportController } from '../modules/report/report.controller'
 
-const router = Router();
+const publicApi = Router();
 
-// Contoh: Auth routes (login, register, dll)
-// router.use('/auth', authRoutes);
+publicApi.post('/reports', ReportController.create)  
 
-// Contoh: Public data routes
-// router.use('/disasters', publicDisasterRoutes);
-
-// Contoh endpoint public
-router.get('/status', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Public API is working',
-  });
-});
-
-export default router;
+export default publicApi;
