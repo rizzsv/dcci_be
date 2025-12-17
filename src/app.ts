@@ -4,8 +4,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { accessLoggerMiddleware } from "./core/logger/access.midleware";
 import { appLogger } from "./core/logger/app.logger";
-import publicRoutes from "./routes/api.public";
-import privateRoutes from "./routes/api.private";
+import publicRoutes from "./api/api.public";
+import privateRoutes from "./api/api.private";
 import { authenticate } from "./middlewares/auth.middleware";
 import { success } from "zod";
 

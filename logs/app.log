@@ -97,3 +97,25 @@
 {"level":"info","message":"Server is running on port 3000"}
 {"level":"info","message":"Server is running on port 3000"}
 {"level":"warn","message":"⚠️ Received SIGINT. Shutting down..."}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"warn","message":"⚠️ Received SIGINT. Shutting down..."}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"error","message":"\nInvalid `prisma.user.delete()` invocation in\nC:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\src\\modules\\user\\user.repository.ts:28:34\n\n  25 }\n  26 \n  27 static delete(id: string) {\n→ 28     return prisma.user.delete(\nAn operation failed because it depends on one or more records that were required but not found. No record was found for a delete.","path":"/api/private/users/deleted/38dbcdd3-c07c-4d45-8148-e989f21c261f","stack":"PrismaClientKnownRequestError: \nInvalid `prisma.user.delete()` invocation in\nC:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\src\\modules\\user\\user.repository.ts:28:34\n\n  25 }\n  26 \n  27 static delete(id: string) {\n→ 28     return prisma.user.delete(\nAn operation failed because it depends on one or more records that were required but not found. No record was found for a delete.\n    at qr.handleRequestError (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\node_modules\\@prisma\\client\\src\\runtime\\RequestHandler.ts:228:13)\n    at qr.handleAndLogRequestError (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\node_modules\\@prisma\\client\\src\\runtime\\RequestHandler.ts:174:12)\n    at qr.request (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\node_modules\\@prisma\\client\\src\\runtime\\RequestHandler.ts:143:12)\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at a (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\node_modules\\@prisma\\client\\src\\runtime\\getPrismaClient.ts:805:24)\n    at delete (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\src\\modules\\user\\user.controller.ts:38:9)"}
