@@ -1,111 +1,108 @@
-  // This is your Prisma schema file,
-  // learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider = "prisma-client-js"
+}
 
-  // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-  // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+}
 
-  generator client {
-    provider = "prisma-client-js"
-  }
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  datasource db {
-    provider = "postgresql"
-  }
+  handledReports Report[]       @relation("HandledReports")
+  notifications  Notification[]
+  logs           TransactionLog[]
+}
 
-  model User {
-    id        String   @id @default(uuid())
-    name      String
-    email     String   @unique
-    password  String
-    role      Role     @default(CITIZEN)
-    phone     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Report {
+  id          String       @id @default(uuid())
+  title       String
+  type        DisasterType
+  description String
+  location    String
+  latitude    Float?
+  longitude   Float?
+  photoUrl    String?
+  status      ReportStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 
-    reports   Report[]
-    notifications Notification[]
-  }
+  handledById String?
+  handledBy   User? @relation("HandledReports", fields: [handledById], references: [id])
 
-  model Report {
-    id          String       @id @default(uuid())
-    userId      String?
-    title       String
-    type        DisasterType
-    description String
-    location    String
-    latitude    Float?
-    longitude   Float?
-    photoUrl    String?
-    status     ReportStatus @default(PENDING)
-    createdAt   DateTime     @default(now())
-    updatedAt   DateTime     @updatedAt
+  disaster    Disaster?
+}
 
-    user User? @relation(fields: [userId], references: [id])
-    disaster Disaster?
-  }
+model Disaster {
+  id         String         @id @default(uuid())
+  reportId   String         @unique
+  type       DisasterType
+  latitude   Float
+  longitude  Float
+  magnitude  Float?
+  status     DisasterStatus @default(ACTIVE)
+  source     DisasterSource @default(CITIZEN_REPORT)
+  createdAt  DateTime       @default(now())
+  resolvedAt DateTime?
 
-  model Disaster {
-    id         String         @id @default(uuid())
-    reportId   String         @unique
-    type      DisasterType
-    latitude   Float
-    longitude  Float
-    magnitude  Float?
-    status    DisasterStatus @default(ACTIVE)
-    source    DisasterSource @default(CITIZEN_REPORT)
-    createdAt  DateTime      @default(now())
-    resolvedAt DateTime?
+  report Report @relation(fields: [reportId], references: [id])
+}
 
-    report Report? @relation(fields: [reportId], references: [id])
-  }
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 
-  model Notification {
-    id       String   @id @default(uuid())
-    userId    String
-    message   String
-    read     Boolean  @default(false)
-    createdAt DateTime @default(now())
+  user User @relation(fields: [userId], references: [id])
+}
 
-    user User @relation(fields: [userId], references: [id])
-  }
+model TransactionLog {
+  id        String   @id @default(uuid())
+  entity    String
+  entityId  String
+  action    String
+  userId    String?
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
 
-  model TransactionLog {
-    id          String   @id @default(uuid())
-    entity      String
-    entityId    String
-    action      String
-    userId     String?
-    before     Json?
-    after      Json?
-    createdAt   DateTime @default(now())
-  }
-  
-  enum Role {
-    ADMIN
-    VOLUNTEER
-    CITIZEN
-  }
+  user User? @relation(fields: [userId], references: [id])
+}
 
-  enum ReportStatus {
-    PENDING
-    VERIFIED
-    REJECTED
-  }
+enum Role {
+  ADMIN
+  VOLUNTEER
+}
 
-  enum DisasterStatus {
-    ACTIVE
-    RESOLVED
-  }
+enum ReportStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
 
-  enum DisasterType {
-    GEMPA
-    BANJIR
-    TANAH_LONGSOR
-    KEBAKARAN
-  }
+enum DisasterStatus {
+  ACTIVE
+  RESOLVED
+}
 
-  enum DisasterSource {
-    BMKG
-    CITIZEN_REPORT
-    ADMIN
-  }
+enum DisasterType {
+  GEMPA
+  BANJIR
+  TANAH_LONGSOR
+  KEBAKARAN
+}
+
+enum DisasterSource {
+  BMKG
+  CITIZEN_REPORT
+  ADMIN
+}
