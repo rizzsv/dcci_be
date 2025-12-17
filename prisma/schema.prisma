@@ -78,6 +78,17 @@ model TransactionLog {
   user User? @relation(fields: [userId], references: [id])
 }
 
+model PushSubscription {
+  id        String   @id @default(uuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  latitude  Float
+  longitude Float
+  radiusKm  Int      @default(50)
+  createdAt DateTime @default(now())
+}
+
 enum Role {
   ADMIN
   VOLUNTEER
