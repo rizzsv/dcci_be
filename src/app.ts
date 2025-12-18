@@ -12,11 +12,16 @@ import { success } from "zod";
 const app = express();
 
 // Global Middlewares
-app.use(helmet())
+app.use(helmet({
+    contentSecurityPolicy: false, // Disable CSP untuk service worker testing
+}))
 app.use(cors())
 app.use(express.json())
 app.use(accessLoggerMiddleware)
 app.use(morgan('dev'))
+
+// Serve static files untuk testing push notification
+app.use(express.static('public'))
 
 
 app.use('/api/public', publicRoutes);
