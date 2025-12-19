@@ -170,3 +170,20 @@
 {"level":"info","message":"Server is running on port 3000"}
 {"level":"error","message":"Invalid credentials","path":"/api/public/auth/login","stack":"Error: Invalid credentials\n    at AuthService.login (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\src\\modules\\user\\auth.service.ts:18:32)\n    at login (C:\\Users\\rizqs\\OneDrive\\Desktop\\Disaster Command Center\\dcci-backend\\src\\modules\\user\\auth.controller.ts:11:28)"}
 {"level":"warn","message":"⚠️ Received SIGINT. Shutting down..."}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"info","message":"Server is running on port 3000"}
+{"level":"warn","message":"⚠️ Received SIGINT. Shutting down..."}

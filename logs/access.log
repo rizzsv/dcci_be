@@ -151,3 +151,5 @@
 {"level":"info","message":{"duration":"101ms","ip":"::1","method":"GET","path":"/api/public/disasters","status":200,"timeStamp":"2025-12-19T02:08:13.712Z","userAgent":"PostmanRuntime/7.51.0","userId":null}}
 {"level":"info","message":{"duration":"160ms","ip":"::1","method":"POST","path":"/api/public/reports","status":201,"timeStamp":"2025-12-19T02:08:49.270Z","userAgent":"PostmanRuntime/7.51.0","userId":null}}
 {"level":"info","message":{"duration":"13ms","ip":"::1","method":"GET","path":"/api/public/disasters","status":200,"timeStamp":"2025-12-19T02:08:56.600Z","userAgent":"PostmanRuntime/7.51.0","userId":null}}
+{"level":"info","message":{"duration":"376ms","ip":"::1","method":"POST","path":"/api/public/auth/login","status":200,"timeStamp":"2025-12-19T02:19:35.659Z","userAgent":"PostmanRuntime/7.51.0","userId":null}}
+{"level":"info","message":{"duration":"101ms","ip":"::1","method":"GET","path":"/api/private/reports-ShowAll","status":200,"timeStamp":"2025-12-19T02:19:47.405Z","userAgent":"PostmanRuntime/7.51.0","userId":"d7ba77e7-586b-429f-bf64-162169895e0a"}}

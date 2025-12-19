@@ -38,4 +38,8 @@ export class ReportService {
             return report
         })
     } 
+
+    static getAllReports() {
+        return ReportRepository.findAllReports();
+    }
 }

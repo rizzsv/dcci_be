@@ -21,4 +21,13 @@ export class ReportController {
             next(error)
         }
     }
+
+    static async getAllReports(req: Request, res: Response, next: NextFunction) {
+        const report = await ReportService.getAllReports();
+
+        res.json({
+            success: true,
+            data: report,
+        });
+    }
 }

@@ -1,4 +1,4 @@
-import { DisasterStatus, DisasterSource, DisasterType } from "@prisma/client";
+import { DisasterSource, DisasterType } from "@prisma/client";
 
 export interface CreateDisasterPayload {
     reportId: string;
