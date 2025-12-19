@@ -2,6 +2,8 @@ import prisma from '../../config/prisma.config'
 import { ReportRepository } from './report.repository'
 import { LoggerService } from '../logger/logger.service'
 import { ReportStatus } from './report.types'
+import { PushService } from '../push/push.service'
+import { GeoService } from '../geo/geo.service'
 import { connect } from 'node:http2'
 
 export class ReportService {
@@ -68,7 +70,70 @@ export class ReportService {
                 adminId
             );
 
-            // Log audit
+            // Jika status VERIFIED, buat disaster
+            if (status === ReportStatus.VERIFIED) {
+                // Validasi report punya tipe bencana
+                if (!existingReport.type) {
+                    const error: any = new Error('Report must have disaster type to create disaster');
+                    error.status = 400;
+                    throw error;
+                }
+
+                let latitude = existingReport.latitude;
+                let longitude = existingReport.longitude;
+
+                // Jika tidak ada koordinat, coba resolve dari location text
+                if ((!latitude || !longitude) && existingReport.location) {
+                    const coords = await GeoService.resolveLocation(existingReport.location);
+                    if (coords) {
+                        latitude = coords.latitude;
+                        longitude = coords.longitude;
+
+                        // Update report dengan koordinat yang di-resolve
+                        await tx.report.update({
+                            where: { id: reportId },
+                            data: {
+                                latitude: coords.latitude,
+                                longitude: coords.longitude
+                            }
+                        });
+                    }
+                }
+
+                // Validasi akhir - harus ada koordinat
+                if (!latitude || !longitude) {
+                    const error: any = new Error('Cannot create disaster: unable to resolve location coordinates');
+                    error.status = 400;
+                    throw error;
+                }
+
+                // Buat disaster baru
+                const disaster = await tx.disaster.create({
+                    data: {
+                        reportId: reportId,
+                        type: existingReport.type,
+                        latitude: latitude,
+                        longitude: longitude,
+                        magnitude: null,
+                        source: 'CITIZEN_REPORT',
+                        status: 'ACTIVE'
+                    }
+                });
+
+                // Kirim notifikasi push ke user terdekat
+                await PushService.notifyNearbyDisaster(disaster);
+
+                // Log audit untuk disaster
+                await LoggerService.audit({
+                    entity: 'Disaster',
+                    entityId: disaster.id,
+                    action: 'CREATE_FROM_VERIFIED_REPORT',
+                    userId: adminId,
+                    after: disaster
+                });
+            }
+
+            // Log audit untuk report
             await LoggerService.audit({
                 entity: 'Report',
                 entityId: reportId,
