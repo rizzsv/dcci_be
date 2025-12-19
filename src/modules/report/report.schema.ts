@@ -9,3 +9,9 @@ export const createReportSchema = z.object({
   longitude: z.number().optional(),
   photoUrl: z.string().url().optional(),
 });
+
+export const updateReportStatusSchema = z.object({
+  status: z.enum(["VERIFIED", "REJECTED"], {
+    message: "Status must be either VERIFIED or REJECTED"
+  })
+});

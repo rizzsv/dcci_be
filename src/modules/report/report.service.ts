@@ -42,4 +42,43 @@ export class ReportService {
     static getAllReports() {
         return ReportRepository.findAllReports();
     }
+
+    static async updateStatus(reportId: string, status: ReportStatus, adminId: string) {
+        return prisma.$transaction(async(tx) => {
+            // Cek apakah report ada
+            const existingReport = await ReportRepository.findById(reportId);
+            
+            if (!existingReport) {
+                const error: any = new Error('Report not found');
+                error.status = 404;
+                throw error;
+            }
+
+            // Cek apakah report masih pending
+            if (existingReport.status !== ReportStatus.PENDING) {
+                const error: any = new Error(`Report already ${existingReport.status.toLowerCase()}`);
+                error.status = 400;
+                throw error;
+            }
+
+            // Update status report
+            const updatedReport = await ReportRepository.updateStatus(
+                reportId,
+                status,
+                adminId
+            );
+
+            // Log audit
+            await LoggerService.audit({
+                entity: 'Report',
+                entityId: reportId,
+                action: `UPDATE_STATUS_${status}`,
+                userId: adminId,
+                before: existingReport,
+                after: updatedReport
+            });
+
+            return updatedReport;
+        });
+    }
 }

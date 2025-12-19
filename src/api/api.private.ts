@@ -26,4 +26,8 @@ PrivateApi.patch('/disasters/:id/resolve', authorize('ADMIN'), DisasterControlle
 // Private Routes report for admin show all reports 
 PrivateApi.get('/reports-ShowAll', authorize('ADMIN', 'VOLUNTEER'), ReportController.getAllReports);
 
+// Report Status Management (admin only)
+PrivateApi.patch('/reports/:id/verify', authorize('ADMIN'), ReportController.verifyReport);
+PrivateApi.patch('/reports/:id/reject', authorize('ADMIN'), ReportController.rejectReport);
+
 export default PrivateApi;
