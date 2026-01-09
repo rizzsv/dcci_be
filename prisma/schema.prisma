@@ -1,99 +1,111 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+  // This is your Prisma schema file,
+  // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+  // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+  // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-}
+  generator client {
+    provider = "prisma-client-js"
+  }
 
-datasource db {
-  provider = "postgresql"
-}
+  datasource db {
+    provider = "postgresql"
+  }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(CITIZEN)
-  phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  model User {
+    id        String   @id @default(uuid())
+    name      String
+    email     String   @unique
+    password  String
+    role      Role     @default(CITIZEN)
+    phone     String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
-  reports   Report[]
-  notifications Notification[]
-}
+    reports   Report[]
+    notifications Notification[]
+  }
 
-model Report {
-  id          String       @id @default(uuid())
-  userId      String
-  type        DisasterType
-  description String
-  latitude    Float
-  longitude   Float
-  photoUrl    String?
-  status     ReportStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  model Report {
+    id          String       @id @default(uuid())
+    userId      String?
+    title       String
+    type        DisasterType
+    description String
+    location    String
+    latitude    Float?
+    longitude   Float?
+    photoUrl    String?
+    status     ReportStatus @default(PENDING)
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  disaster Disaster?
-}
+    user User? @relation(fields: [userId], references: [id])
+    disaster Disaster?
+  }
 
-model Disaster {
-  id         String         @id @default(uuid())
-  reportId   String         @unique
-  type      DisasterType
-  latitude   Float
-  longitude  Float
-  magnitude  Float?
-  status    DisasterStatus @default(ACTIVE)
-  source    DisasterSource @default(CITIZEN_REPORT)
-  createdAt  DateTime      @default(now())
-  resolvedAt DateTime?
+  model Disaster {
+    id         String         @id @default(uuid())
+    reportId   String         @unique
+    type      DisasterType
+    latitude   Float
+    longitude  Float
+    magnitude  Float?
+    status    DisasterStatus @default(ACTIVE)
+    source    DisasterSource @default(CITIZEN_REPORT)
+    createdAt  DateTime      @default(now())
+    resolvedAt DateTime?
 
-  report Report? @relation(fields: [reportId], references: [id])
-}
+    report Report? @relation(fields: [reportId], references: [id])
+  }
 
-model Notification {
-  id       String   @id @default(uuid())
-  userId    String
-  message   String
-  read     Boolean  @default(false)
-  createdAt DateTime @default(now())
+  model Notification {
+    id       String   @id @default(uuid())
+    userId    String
+    message   String
+    read     Boolean  @default(false)
+    createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
-}
+    user User @relation(fields: [userId], references: [id])
+  }
 
-enum Role {
-  ADMIN
-  VOLUNTEER
-  CITIZEN
-}
+  model TransactionLog {
+    id          String   @id @default(uuid())
+    entity      String
+    entityId    String
+    action      String
+    userId     String?
+    before     Json?
+    after      Json?
+    createdAt   DateTime @default(now())
+  }
+  
+  enum Role {
+    ADMIN
+    VOLUNTEER
+    CITIZEN
+  }
 
-enum ReportStatus {
-  PENDING
-  VERIFIED
-  REJECTED
-}
+  enum ReportStatus {
+    PENDING
+    VERIFIED
+    REJECTED
+  }
 
-enum DisasterStatus {
-  ACTIVE
-  RESOLVED
-}
+  enum DisasterStatus {
+    ACTIVE
+    RESOLVED
+  }
 
-enum DisasterType {
-  GEMPA
-  BANJIR
-  TANAH_LONGSOR
-  KEBAKARAN
-}
+  enum DisasterType {
+    GEMPA
+    BANJIR
+    TANAH_LONGSOR
+    KEBAKARAN
+  }
 
-enum DisasterSource {
-  BMKG
-  CITIZEN_REPORT
-  ADMIN
-}
+  enum DisasterSource {
+    BMKG
+    CITIZEN_REPORT
+    ADMIN
+  }
