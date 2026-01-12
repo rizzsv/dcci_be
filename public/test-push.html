@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Push Notification - DCCI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    
+    p {
+      color: #666;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 10px;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+    
+    .btn-danger {
+      background: #f44336;
+    }
+    
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-left: 4px solid #4caf50;
+    }
+    
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      border-left: 4px solid #f44336;
+    }
+    
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-left: 4px solid #2196f3;
+    }
+    
+    .log {
+      margin-top: 20px;
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔔 Test Push Notification</h1>
+    <p>Disaster Command Center Indonesia - Push Notification Testing</p>
+    
+    <div class="input-group">
+      <label for="latitude">📍 Latitude (contoh: -7.78 untuk Jogja)</label>
+      <input type="number" id="latitude" step="0.000001" value="-7.78" placeholder="-7.78">
+    </div>
+    
+    <div class="input-group">
+      <label for="longitude">📍 Longitude (contoh: 110.43 untuk Jogja)</label>
+      <input type="number" id="longitude" step="0.000001" value="110.43" placeholder="110.43">
+    </div>
+    
+    <div class="input-group">
+      <label for="radius">📏 Radius (km)</label>
+      <input type="number" id="radius" value="50" placeholder="50">
+    </div>
+    
+    <button id="subscribeBtn" onclick="subscribe()">
+      🔔 Aktifkan Notifikasi
+    </button>
+    
+    <button class="btn-secondary" onclick="checkStatus()">
+      ℹ️ Cek Status
+    </button>
+    
+    <button class="btn-danger" onclick="unsubscribe()">
+      🔕 Matikan Notifikasi
+    </button>
+    
+    <div id="status"></div>
+    <div id="log" class="log" style="display: none;"></div>
+  </div>
+
+  <script src="/register-sw.js"></script>
+  <script>
+    const statusDiv = document.getElementById('status');
+    const logDiv = document.getElementById('log');
+    const subscribeBtn = document.getElementById('subscribeBtn');
+
+    // Override console.log untuk menampilkan di UI
+    const originalLog = console.log;
+    console.log = function(...args) {
+      originalLog.apply(console, args);
+      logDiv.style.display = 'block';
+      logDiv.innerHTML += args.join(' ') + '<br>';
+      logDiv.scrollTop = logDiv.scrollHeight;
+    };
+
+    async function subscribe() {
+      const latitude = parseFloat(document.getElementById('latitude').value);
+      const longitude = parseFloat(document.getElementById('longitude').value);
+      const radius = parseInt(document.getElementById('radius').value);
+
+      if (!latitude || !longitude) {
+        showStatus('error', '❌ Latitude dan Longitude harus diisi!');
+        return;
+      }
+
+      subscribeBtn.disabled = true;
+      subscribeBtn.textContent = '⏳ Memproses...';
+      showStatus('info', '⏳ Sedang mendaftarkan notifikasi...');
+
+      const result = await registerServiceWorkerAndSubscribe(latitude, longitude, radius);
+
+      subscribeBtn.disabled = false;
+      subscribeBtn.textContent = '🔔 Aktifkan Notifikasi';
+
+      if (result.success) {
+        showStatus('success', `✅ Notifikasi berhasil diaktifkan!<br>
+          Endpoint: ${result.subscription.endpoint.substring(0, 50)}...<br>
+          Lokasi: ${latitude}, ${longitude} (Radius: ${radius} km)<br>
+          <br>
+          Sekarang coba buat disaster di area tersebut!`);
+      } else {
+        showStatus('error', `❌ Gagal: ${result.error}`);
+      }
+    }
+
+    async function checkStatus() {
+      showStatus('info', '⏳ Mengecek status...');
+      const sub = await checkSubscriptionStatus();
+      
+      if (sub) {
+        showStatus('success', `✅ Sudah subscribe!<br>Endpoint: ${sub.endpoint.substring(0, 50)}...`);
+      } else {
+        showStatus('error', '❌ Belum subscribe');
+      }
+    }
+
+    async function unsubscribe() {
+      showStatus('info', '⏳ Menonaktifkan notifikasi...');
+      const success = await unsubscribeFromPush();
+      
+      if (success) {
+        showStatus('success', '✅ Notifikasi berhasil dinonaktifkan');
+      } else {
+        showStatus('error', '❌ Belum ada subscription aktif');
+      }
+    }
+
+    function showStatus(type, message) {
+      statusDiv.className = `status ${type}`;
+      statusDiv.innerHTML = message;
+    }
+
+    // Auto check on load
+    window.onload = () => {
+      checkStatus();
+    };
+  </script>
+</body>
+</html>
