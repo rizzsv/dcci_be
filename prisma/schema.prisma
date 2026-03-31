@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -18,60 +11,76 @@ model User {
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(CITIZEN)
+  role      Role
   phone     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  reports   Report[]
-  notifications Notification[]
+  handledReports Report[]       @relation("HandledReports")
+  notifications  Notification[]
+  logs           TransactionLog[]
 }
 
 model Report {
   id          String       @id @default(uuid())
-  userId      String
+  title       String
   type        DisasterType
   description String
-  latitude    Float
-  longitude   Float
+  location    String
+  latitude    Float?
+  longitude   Float?
   photoUrl    String?
-  status     ReportStatus @default(PENDING)
+  status      ReportStatus @default(PENDING)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
-  disaster Disaster?
+  handledById String?
+  handledBy   User? @relation("HandledReports", fields: [handledById], references: [id])
+
+  disaster    Disaster?
 }
 
 model Disaster {
   id         String         @id @default(uuid())
   reportId   String         @unique
-  type      DisasterType
+  type       DisasterType
   latitude   Float
   longitude  Float
   magnitude  Float?
-  status    DisasterStatus @default(ACTIVE)
-  source    DisasterSource @default(CITIZEN_REPORT)
-  createdAt  DateTime      @default(now())
+  status     DisasterStatus @default(ACTIVE)
+  source     DisasterSource @default(CITIZEN_REPORT)
+  createdAt  DateTime       @default(now())
   resolvedAt DateTime?
 
-  report Report? @relation(fields: [reportId], references: [id])
+  report Report @relation(fields: [reportId], references: [id])
 }
 
 model Notification {
-  id       String   @id @default(uuid())
+  id        String   @id @default(uuid())
   userId    String
   message   String
-  read     Boolean  @default(false)
+  read      Boolean  @default(false)
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
 
+model TransactionLog {
+  id        String   @id @default(uuid())
+  entity    String
+  entityId  String
+  action    String
+  userId    String?
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
 enum Role {
   ADMIN
   VOLUNTEER
-  CITIZEN
 }
 
 enum ReportStatus {
